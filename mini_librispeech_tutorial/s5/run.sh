@@ -17,9 +17,11 @@ set -euo pipefail
 
 mkdir -p $data
 
-for part in dev-clean-2 train-clean-5; do
-  local/download_and_untar.sh $data $data_url $part
-done
+if [ $stage -eq -1 ]; then
+  for part in dev-clean-2 train-clean-5; do
+    local/download_and_untar.sh $data $data_url $part
+  done
+fi
 
 if [ $stage -eq 0 ]; then
   local/download_lm.sh $lm_url $data data/local/lm
@@ -31,6 +33,11 @@ if [ $stage -eq 1 ]; then
     # use underscore-separated names in data directories.
     local/data_prep.sh $data/LibriSpeech/$part data/$(echo $part | sed s/-/_/g)
   done
+  
+  # take only 100 first samples from dev_clean_2 to speed-up model evaluation
+  cp -rf data/dev_clean_2 data/dev_clean_2.bak
+  head -n100 data/dev_clean_2.bak/wav.scp > data/dev_clean_2/wav.scp
+  ./utils/fix_data_dir.sh data/dev_clean_2
 
   local/prepare_dict.sh --stage 3 --nj $nj --cmd "$train_cmd" \
     data/local/lm data/local/lm data/local/dict_nosp
