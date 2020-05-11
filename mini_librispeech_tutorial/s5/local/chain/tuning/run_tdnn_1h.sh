@@ -29,6 +29,7 @@ set -euo pipefail
 # (some of which are also used in this script directly).
 stage=0
 decode_nj=2
+nj=2
 train_set=train_clean_5
 test_sets=dev_clean_2
 gmm=tri3b
@@ -124,7 +125,7 @@ fi
 if [ $stage -le 11 ]; then
   # Get the alignments as lattices (gives the chain training more freedom).
   # use the same num-jobs as the alignments
-  steps/align_fmllr_lats.sh --nj 75 --cmd "$train_cmd" ${lores_train_data_dir} \
+  steps/align_fmllr_lats.sh --nj $nj --cmd "$train_cmd" ${lores_train_data_dir} \
     data/lang $gmm_dir $lat_dir
   rm $lat_dir/fsts.*.gz # save space
 fi
