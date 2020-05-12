@@ -8,7 +8,7 @@
 # System                tdnn1g_sp tdnn1h_sp tdnn1h2_sp tdnn1h3_sp
 #WER dev_clean_2 (tgsmall)      13.50     12.09     12.23     12.19
 #             [online:]         13.52     12.11     12.25     12.14
-#WER dev_clean_2 (tglarge)       9.79      8.59      8.64      8.73
+#WER dev_clean_2 (tgmed)       9.79      8.59      8.64      8.73
 #             [online:]          9.79      8.76      8.65      8.78
 # Final train prob        -0.0460   -0.0493   -0.0490   -0.0493
 # Final valid prob        -0.0892   -0.0805   -0.0803   -0.0813
@@ -258,8 +258,8 @@ if [ $stage -le 16 ]; then
           --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_${data}_hires \
           $tree_dir/graph_tgsmall data/${data}_hires ${dir}/decode_tgsmall_${data} || exit 1
       steps/lmrescore_const_arpa.sh --cmd "$decode_cmd" \
-        data/lang_test_{tgsmall,tglarge} \
-       data/${data}_hires ${dir}/decode_{tgsmall,tglarge}_${data} || exit 1
+        data/lang_test_{tgsmall,tgmed} \
+       data/${data}_hires ${dir}/decode_{tgsmall,tgmed}_${data} || exit 1
     ) || touch $dir/.error &
   done
   wait
@@ -289,8 +289,8 @@ if $test_online_decoding && [ $stage -le 17 ]; then
         --nj $nspk --cmd "$decode_cmd" \
         $tree_dir/graph_tgsmall data/${data} ${dir}_online/decode_tgsmall_${data} || exit 1
       steps/lmrescore_const_arpa.sh --cmd "$decode_cmd" \
-        data/lang_test_{tgsmall,tglarge} \
-       data/${data}_hires ${dir}_online/decode_{tgsmall,tglarge}_${data} || exit 1
+        data/lang_test_{tgsmall,tgmed} \
+       data/${data}_hires ${dir}_online/decode_{tgsmall,tgmed}_${data} || exit 1
     ) || touch $dir/.error &
   done
   wait
